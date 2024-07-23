@@ -74,13 +74,50 @@
         .signup a:hover {
             text-decoration: underline;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
+    <script>
+        async function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('error');
+
+            try {
+                const response = await fetch('checklogin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.text();
+
+                if (result === 'OK') {
+                    window.location.href = 'invlist';
+                } else {
+                    errorElement.style.display = 'block';
+                    errorElement.textContent = 'Login failed';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorElement.style.display = 'block';
+                errorElement.textContent = 'An error occurred. Please try again later.';
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Welcome!</h1>
         <p>CSII Summer Course 2024 Demo</p>
-        <form action="main.html" method="post">
+        <form onsubmit="login(event)">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Email*" required>
@@ -92,9 +129,10 @@
             <div class="button-container">
                 <button type="submit">Login</button>
             </div>
+            <div id="error" class="error">Login failed</div>
         </form>
         <div class="signup">
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <p>Don't have an account? <a href="signup">Sign Up</a></p>
         </div>
     </div>
 </body>
